@@ -48,12 +48,7 @@
     </header>
 
     <div class="card" id="quiz">
-      <!-- Questions -->
-      <!-- We'll enumerate Q1..Q10. Each radio group named q1..q10 value 1..5 -->
-      <!-- Question text matches the set used earlier -->
-      <div id="questions">
-        <!-- template for questions (filled by JS if needed) -->
-      </div>
+      <div id="questions"></div>
 
       <div class="btns">
         <button class="btn" id="calcBtn">診断する</button>
@@ -61,8 +56,9 @@
       </div>
 
       <div id="resultArea" class="result" style="display:none;">
-        <div>あなたのタイプ： <span class="typecode" id="typeCode"></span></div>
-        <div class="typename" id="typeName"></div>
+        <div style="text-align:center;" >あなたのタイプ<br> <span class="typecode"style="text-align:center;font-size:40px;" id="typeCode"></span></div>
+        <div style="text-align:center; font-size:20px; font-weight:900;" class="small" id="typeFormal"></div> <!-- 正式名称表示 -->
+        <div style="text-align:center; font-size:25px; font-weight:900;" class="typename" id="typeName"></div>
         <div class="desc" id="typeDesc"></div>
 
         <div style="margin-top:12px;display:flex;gap:8px;align-items:center;">
@@ -72,7 +68,6 @@
       </div>
     </div>
 
-   
 <br>
     <div class="card" id="typesCard" style="display:none;">
       <h3>16タイプ一覧</h3>
@@ -103,53 +98,36 @@ MJMJ : マジャ詩人団
   </div>
 
 <script>
-/*
- Questions and their mapping:
- For each question we define which side 'agree' (low number) supports.
- s = 3 - answer  => 1=>+2, 2=>+1, 3=>0, 4=>-1, 5=>-2
- For a question that supports the "first" letter in axis, dir = +1
- If it supports the "second" letter, dir = -1
-
- Axis grouping:
- Axis1 (pos1): Q1,Q2,Q3  -> decides G (pos) vs M (neg)
- Axis2 (pos2): Q4,Q5,Q6  -> decides C (pos) vs J (neg)
- Axis3 (pos3): Q7,Q8     -> decides G (pos) vs M (neg)
- Axis4 (pos4): Q9,Q10    -> decides C (pos) vs J (neg)
-*/
-
 const questions = [
-  {id:1, text:"新しい人と出会うのが楽しいと感じる。", side:"G"}, // G when agree
-  {id:2, text:"静かな場所で一人の時間を過ごすと落ち着く。", side:"M"}, // M when agree
-  {id:3, text:"人前で話すことに抵抗がない。", side:"G"}, // G when agree
-
-  {id:4, text:"予定やルールがきちんと決まっている方が安心する。", side:"C"}, // C when agree
-  {id:5, text:"計画よりも、その場のノリで行動することが多い。", side:"J"}, // J when agree
-  {id:6, text:"思いついたことをすぐ試したくなる。", side:"J"}, // J when agree
-
-  {id:7, text:"何か思い立ったらすぐ動くタイプだ。", side:"G"}, // G when agree
-  {id:8, text:"考えてから行動することが多い。", side:"M"}, // M when agree
-
-  {id:9, text:"物事を決めるときは、論理的に考える方だ。", side:"C"}, // C when agree
-  {id:10,text:"直感やひらめきを大事にしている。", side:"J"} // J when agree
+  {id:1, text:"新しい人と出会うのが楽しいと感じる。", side:"G"},
+  {id:2, text:"静かな場所で一人の時間を過ごすと落ち着く。", side:"M"},
+  {id:3, text:"人前で話すことに抵抗がない。", side:"G"},
+  {id:4, text:"予定やルールがきちんと決まっている方が安心する。", side:"C"},
+  {id:5, text:"計画よりも、その場のノリで行動することが多い。", side:"J"},
+  {id:6, text:"思いついたことをすぐ試したくなる。", side:"J"},
+  {id:7, text:"何か思い立ったらすぐ動くタイプだ。", side:"G"},
+  {id:8, text:"考えてから行動することが多い。", side:"M"},
+  {id:9, text:"物事を決めるときは、論理的に考える方だ。", side:"C"},
+  {id:10,text:"直感やひらめきを大事にしている。", side:"J"}
 ];
 
 const typeMap = {
-  "GCGC（GachancaGachanca)": {name:"トコさん", desc:""},
-  "GCGJ(GachancaGajanca)": {name:"ガチャ舞い人", desc:""},
-  "GCMC(GachancaMachanca)": {name:"ガチャ忍者", desc:""},
-  "GCMJ(GachancaMajanca)": {name:"ガチャンカ・マジャンカ", desc:""},
-  "GJGC(GajancaGachanca)": {name:"自由ガチャ探検隊", desc:""},
-  "GJGJ(GajancaGajanca)": {name:"光ガチャ芸人", desc:""},
-  "GJMC(GajancaMachanca)": {name:"ガチャ旅人", desc:""},
-  "GJMJ(GajancaMajanca)": {name:"ガチャ表現者", desc:""},
-  "MCGC(MachancaGachanca)": {name:"研ぎマジャ実務者", desc:""},
-  "MCGJ(MachancaGajanca)": {name:"マジャ分析士", desc:""},
-  "MCMC(MachancaMachanca)": {name:"マジャ観察者", desc:""},
-  "MCMJ(MachancaMajanca)": {name:"マジャ支援団", desc:""},
-  "MJGC(MajancaGachanca)": {name:"マジャ調律団", desc:""},
-  "MJGJ(MajancaGajanca)": {name:"夢マジャ紡ぎ手", desc:""},
-  "MJMC(MajancaMachanca)": {name:"マジャ探求者", desc:""},
-  "MJMJ(MajancaMajanca)": {name:"レオン", desc:""}
+  "GCGC": {name:"トコさん", formal:"GachancaGachanca", desc:""},
+  "GCGJ": {name:"ガチャ舞い人", formal:"GachancaGajanca", desc:""},
+  "GCMC": {name:"ガチャ忍者", formal:"GachancaMachanca", desc:""},
+  "GCMJ": {name:"ガチャンカ・マジャンカ", formal:"GachancaMajanca", desc:""},
+  "GJGC": {name:"自由ガチャ探検隊", formal:"GajancaGachanca", desc:""},
+  "GJGJ": {name:"光ガチャ芸人", formal:"GajancaGajanca", desc:""},
+  "GJMC": {name:"ガチャ旅人", formal:"GajancaMachanca", desc:""},
+  "GJMJ": {name:"ガチャ表現者", formal:"GajancaMajanca", desc:""},
+  "MCGC": {name:"研ぎマジャ実務者", formal:"MachancaGachanca", desc:""},
+  "MCGJ": {name:"マジャ分析士", formal:"MachancaGajanca", desc:""},
+  "MCMC": {name:"マジャ観察者", formal:"MachancaMachanca", desc:""},
+  "MCMJ": {name:"マジャ支援団", formal:"MachancaMajanca", desc:""},
+  "MJGC": {name:"マジャ調律団", formal:"MajancaGachanca", desc:""},
+  "MJGJ": {name:"夢マジャ紡ぎ手", formal:"MajancaGajanca", desc:""},
+  "MJMC": {name:"マジャ探求者", formal:"MajancaMachanca", desc:""},
+  "MJMJ": {name:"レオン", formal:"MajancaMajanca", desc:""}
 };
 
 function el(tag, props={}, children=[]){
@@ -174,7 +152,6 @@ function buildQuestions(){
     for(let v=1;v<=5;v++){
       const id = `q${q.id}v${v}`;
       const radio = el("input",{type:"radio", name:`q${q.id}`, id:id, value:String(v)});
-      // default select 3 (どちらでもない) for all
       if(v===3) radio.checked = true;
       const label = el("label",{class:"opt", for:id},[String(v)]);
       opts.appendChild(radio); opts.appendChild(label);
@@ -195,7 +172,6 @@ function resetForm(){
 }
 
 function calcResult(){
-  // fetch answers
   const answers = [];
   for(const q of questions){
     const radios = document.getElementsByName(`q${q.id}`);
@@ -205,76 +181,24 @@ function calcResult(){
     answers.push(val);
   }
 
-  // helper: s = 3 - a
-  const svals = answers.map(a => 3 - a); // range -2..+2
+  const svals = answers.map(a => 3 - a);
 
-  // axis calculations
-  // Axis1 (G vs M): Q1,Q2,Q3 -> indices 0,1,2
-  // for each question, direction: +1 if supports G, -1 if supports M
-  const dir = questions.map(q=> {
-    // map side to dir relative to axis letter for that question's axis:
-    // We'll use: for axis1 -> G positive, M negative.
-    // For axis2 -> C positive, J negative.
-    // For axis3 -> G positive, M negative.
-    // For axis4 -> C positive, J negative.
-    return q.side; // keep side for mapping below
-  });
+  let axis1=0,axis2=0,axis3=0,axis4=0;
+  [0,1,2].forEach(i=>{ axis1 += svals[i]*(questions[i].side==="G"?+1:-1); });
+  [3,4,5].forEach(i=>{ axis2 += svals[i]*(questions[i].side==="C"?+1:-1); });
+  [6,7].forEach(i=>{ axis3 += svals[i]*(questions[i].side==="G"?+1:-1); });
+  [8,9].forEach(i=>{ axis4 += svals[i]*(questions[i].side==="C"?+1:-1); });
 
-  // compute sums
-  // Axis1:
-  let axis1 = 0; // positive -> G, negative -> M
-  [0,1,2].forEach(i=>{
-    const side = dir[i];
-    const s = svals[i];
-    const d = (side === "G") ? +1 : -1; // G vs M
-    axis1 += s * d;
-  });
+  const code = `${axis1>=0?"G":"M"}${axis2>=0?"C":"J"}${axis3>=0?"G":"M"}${axis4>=0?"C":"J"}`;
+  const info = typeMap[code] || {name:"不明の型", formal:"UnknownType", desc:"対応する説明が見つかりません。"};
 
-  // Axis2:
-  let axis2 = 0; // positive -> C, negative -> J
-  [3,4,5].forEach(i=>{
-    const side = dir[i];
-    const s = svals[i];
-    const d = (side === "C") ? +1 : -1; // C vs J
-    axis2 += s * d;
-  });
-
-  // Axis3:
-  let axis3 = 0; // positive -> G, negative -> M
-  [6,7].forEach(i=>{
-    const side = dir[i];
-    const s = svals[i];
-    const d = (side === "G") ? +1 : -1;
-    axis3 += s * d;
-  });
-
-  // Axis4:
-  let axis4 = 0; // positive -> C, negative -> J
-  [8,9].forEach(i=>{
-    const side = dir[i];
-    const s = svals[i];
-    const d = (side === "C") ? +1 : -1;
-    axis4 += s * d;
-  });
-
-  // determine letters: tie (==0) -> choose the "first" letter (G or C) to be slightly favorable
-  const letter1 = (axis1 >= 0) ? "G" : "M";
-  const letter2 = (axis2 >= 0) ? "C" : "J";
-  const letter3 = (axis3 >= 0) ? "G" : "M";
-  const letter4 = (axis4 >= 0) ? "C" : "J";
-
-  const code = `${letter1}${letter2}${letter3}${letter4}`;
-
-  // lookup name
-  const info = typeMap[code] || {name:"不明の型", desc:"対応する説明が見つかりません。"};
-  // show result
   document.getElementById("typeCode").textContent = code;
+  document.getElementById("typeFormal").textContent = `(${info.formal})`; // ← 正式名称を表示
   document.getElementById("typeName").textContent = info.name;
   document.getElementById("typeDesc").textContent = info.desc +
-    `\n\n（軸値） axis1=${axis1.toFixed(1)}, axis2=${axis2.toFixed(1)}, axis3=${axis3.toFixed(1)}, axis4=${axis4.toFixed(1)} `;
+    `\n\n（軸値） axis1=${axis1.toFixed(1)}, axis2=${axis2.toFixed(1)}, axis3=${axis3.toFixed(1)}, axis4=${axis4.toFixed(1)}`;
 
   document.getElementById("resultArea").style.display = "block";
-  // scroll into view
   document.getElementById("resultArea").scrollIntoView({behavior:"smooth"});
 }
 
@@ -283,15 +207,16 @@ document.addEventListener("DOMContentLoaded", ()=>{
   document.getElementById("calcBtn").addEventListener("click", calcResult);
   document.getElementById("resetBtn").addEventListener("click", resetForm);
   document.getElementById("copyBtn").addEventListener("click", ()=>{
-    const code = document.getElementById("typeCode").textContent;
-    const name = document.getElementById("typeName").textContent;
-    const desc = document.getElementById("typeDesc").textContent;
-    const text = `ガチャマジャ診断結果： ${code} ${name}\n${desc}`;
-    navigator.clipboard?.writeText(text).then(()=> alert("結果をコピーしました。"), ()=> alert("コピーに失敗しました"));
+    const code=document.getElementById("typeCode").textContent;
+    const formal=document.getElementById("typeFormal").textContent;
+    const name=document.getElementById("typeName").textContent;
+    const desc=document.getElementById("typeDesc").textContent;
+    const text=`ガチャマジャ診断結果： ${code} ${formal} ${name}\n${desc}`;
+    navigator.clipboard?.writeText(text).then(()=>alert("結果をコピーしました。"),()=>alert("コピーに失敗しました"));
   });
   document.getElementById("detailBtn").addEventListener("click", ()=>{
-    const card = document.getElementById("typesCard");
-    card.style.display = card.style.display === "none" ? "block" : "none";
+    const card=document.getElementById("typesCard");
+    card.style.display=card.style.display==="none"?"block":"none";
     card.scrollIntoView({behavior:"smooth"});
   });
 });
