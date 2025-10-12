@@ -59,11 +59,11 @@
   <div style="text-align:center;">あなたのタイプ<br>
     <span class="typecode" style="text-align:center;font-size:40px;" id="typeCode"></span>
   </div>
-  <div style="text-align:center; font-size:20px; font-weight:900;" class="small" id="typeFormal"></div>
+  <div style="font-size:25px; font-weight:900; margin-bottom:8px; color:black;" class="small" id="typeFormal"></div>
 
   <!-- タイプ名と説明をまとめてセンタリング -->
   <div style="text-align:center; margin-top:12px;">
-    <div class="typename" id="typeName" style="font-size:25px; font-weight:900; margin-bottom:8px;"></div>
+    <div class="typename" id="typeName" style="text-align:center; font-size:20px; font-weight:900; color:gray; margin:-15px 0px 15px 0px;"></div>
     <div class="desc" id="typeDesc" style="max-width:600px; margin:0 auto; color:var(--muted); line-height:1.6;"></div>
   </div>
 
@@ -118,22 +118,86 @@ const questions = [
 ];
 
 const typeMap = {
-  "GCGC": {name:"トコさん", formal:"GachancaGachanca", desc:"エネルギッシュで直進型。思い立ったら即行動、リーダー向き。"},
-  "GCGJ": {name:"ガチャ舞い人", formal:"GachancaGajanca", desc:"活発で表現力豊か。場の雰囲気を読む感性も高い。"},
-  "GCMC": {name:"ガチャ忍者", formal:"GachancaMachanca", desc:"静かで落ち着きがあり、観察力に優れる。"},
-  "GCMJ": {name:"ガチャンカ・マジャンカ", formal:"GachancaMajanca", desc:"柔軟で人の相談に乗るのが得意。"},
-  "GJGC": {name:"自由ガチャ探検隊", formal:"GajancaGachanca", desc:"自由奔放で好奇心旺盛。"},
-  "GJGJ": {name:"光ガチャ芸人", formal:"GajancaGajanca", desc:"明るく人を楽しませるのが得意。"},
-  "GJMC": {name:"ガチャ旅人", formal:"GajancaMachanca", desc:"控えめだが好奇心を持って行動する。"},
-  "GJMJ": {name:"ガチャ表現者", formal:"GajancaMajanca", desc:"感性豊かで表現力が高い。"},
-  "MCGC": {name:"研ぎマジャ実務者", formal:"MachancaGachanca", desc:"地道に努力し、実務をこなすタイプ。"},
-  "MCGJ": {name:"マジャ分析士", formal:"MachancaGajanca", desc:"論理的で分析力に優れる。"},
-  "MCMC": {name:"マジャ観察者", formal:"MachancaMachanca", desc:"観察力が高く、慎重に行動する。"},
-  "MCMJ": {name:"マジャ支援団", formal:"MachancaMajanca", desc:"人をサポートするのが得意。"},
-  "MJGC": {name:"マジャ調律団", formal:"MajancaGachanca", desc:"調整役でバランスを取るのが上手。"},
-  "MJGJ": {name:"夢マジャ紡ぎ手", formal:"MajancaGajanca", desc:"想像力豊かで夢を形にするのが得意。"},
-  "MJMC": {name:"マジャ探求者", formal:"MajancaMachanca", desc:"探求心が強く、深く考えるタイプ。"},
-  "MJMJ": {name:"レオン", formal:"MajancaMajanca", desc:"創造力豊かで詩的な感性を持つ。"}
+  "GCGC": {
+    name:"(生粋のガチャラー)",
+    formal:"ガチャンカ・ガチャンカ",
+    desc:"エネルギッシュで直進型。思い立ったら即行動する行動派で、リーダー向き。目標に向かって突き進む力が強く、周囲を巻き込みながら物事を進めることが得意。注意点としては、細かい計画や周囲の意見を無視して突っ走りがち。"
+  },
+  "GCGJ": {
+    name:"(ガチャ舞い人)",
+    formal:"ガチャンカ・ガジャンカ",
+    desc:"活発で表現力豊か。場の雰囲気を読む感性が高く、周囲を楽しませたり盛り上げるのが得意。創造的なアイデアを次々に形にできる。気をつける点は、計画性に欠けることがあり、やや衝動的になること。"
+  },
+  "GCMC": {
+    name:"(ガチャ忍者)",
+    formal:"ガチャンカ・マチャンカ",
+    desc:"静かで落ち着きがあり、観察力に優れるタイプ。人や物事を冷静に見極め、最適なタイミングで行動できる。目立たないが確実に成果を上げる実力者。注意点は、他人に意見を言わず、孤立しやすい傾向があること。"
+  },
+  "GCMJ": {
+    name:"(ガチャンカ・マジャンカ)",
+    formal:"ガチャンカ・マジャンカ",
+    desc:"柔軟で、人の相談に乗るのが得意なタイプ。周囲の状況に応じて臨機応変に対応できる。対人関係で信頼を得やすく、協力的な姿勢が評価される。注意点は、自分の意見を押し殺して相手に合わせすぎることがある。"
+  },
+  "GJGC": {
+    name:"(自由ガチャ探検隊)",
+    formal:"ガジャンカ・ガチャンカ",
+    desc:"自由奔放で好奇心旺盛。新しいことに挑戦するのが好きで、冒険心が強い。枠にとらわれず行動し、周囲にも刺激を与える。注意点は、計画性がなく飽きっぽいため、物事を最後までやり遂げるのが難しいこと。"
+  },
+  "GJGJ": {
+    name:"(光ガチャ芸人)",
+    formal:"ガジャンカ・ガジャンカ",
+    desc:"明るく人を楽しませるのが得意。感性が豊かで、表現力や演出力に優れる。周囲を笑顔にする能力が高く、チームのムードメーカーになる。注意点は、自己中心的になりやすく、場の空気を読みすぎて疲れることがある。"
+  },
+  "GJMC": {
+    name:"(ガチャ旅人)",
+    formal:"ガジャンカ・マチャンカ",
+    desc:"控えめだが好奇心を持って行動するタイプ。観察力と行動力をバランスよく持ち、周囲の状況に合わせて柔軟に動ける。注意点は、積極性に欠けることがあり、自分から主導権を取らない傾向がある。"
+  },
+  "GJMJ": {
+    name:"(ガチャ表現者)",
+    formal:"ガジャンカ・マジャンカ",
+    desc:"感性豊かで表現力が高い。創造的なアイデアや芸術的才能を持ち、独自のスタイルで物事を表現することが得意。注意点は、感情や直感に頼りすぎて現実的な判断を軽視することがある。"
+  },
+  "MCGC": {
+    name:"(研ぎマジャ実務者)",
+    formal:"マチャンカ・ガチャンカ",
+    desc:"地道に努力し、実務をこなすタイプ。計画的で責任感が強く、細かい作業や管理が得意。信頼性が高く、チームの安定剤になる。注意点は、柔軟性に欠け、新しい変化に対応するのが苦手なことがある。"
+  },
+  "MCGJ": {
+    name:"(マジャ分析士)",
+    formal:"マチャンカ・ガジャンカ",
+    desc:"論理的で分析力に優れるタイプ。物事を深く考え、計画や戦略を立てるのが得意。問題解決能力が高く、慎重に行動する。注意点は、完璧主義になりすぎたり、行動が遅れることがある。"
+  },
+  "MCMC": {
+    name:"(マジャ観察者)",
+    formal:"マチャンカ・マチャンカ",
+    desc:"観察力が高く、慎重に行動するタイプ。周囲を冷静に見極め、リスクを避けながら着実に物事を進める。注意点は、自己主張が少なく、機会を逃しやすいことがある。"
+  },
+  "MCMJ": {
+    name:"(マジャ支援団)",
+    formal:"マチャンカ・マジャンカ",
+    desc:"人をサポートするのが得意で、協力的かつ思いやりのあるタイプ。チームの調和を重視し、助けを必要とする人を気づかいやすい。注意点は、他人を優先しすぎて自分の目標が後回しになること。"
+  },
+  "MJGC": {
+    name:"(マジャ調律団)",
+    formal:"マジャンカ・ガチャンカ",
+    desc:"調整役でバランスを取るのが上手。チームや人間関係の中で仲介役となり、対立を回避するのが得意。注意点は、他人に合わせすぎて主体性を欠くことがある。"
+  },
+  "MJGJ": {
+    name:"(夢マジャ紡ぎ手)",
+    formal:"マジャンカ・ガジャンカ",
+    desc:"想像力豊かで、夢を形にするのが得意。独創的な発想でアイデアを生み出し、人に影響を与える。注意点は、現実感に欠け、空想に浸りすぎることがある。"
+  },
+  "MJMC": {
+    name:"(マジャ探求者)",
+    formal:"マジャンカ・マチャンカ",
+    desc:"探求心が強く、深く考えるタイプ。知識欲が旺盛で、物事を深く理解しようとする。注意点は、分析に没頭しすぎて行動が遅れることがある。"
+  },
+  "MJMJ": {
+    name:"(生粋のマジャリスト)",
+    formal:"マジャンカ・マジャンカ",
+    desc:"創造力豊かで詩的な感性を持つ。芸術や文章などの表現に優れ、人の心を動かす力がある。注意点は、現実的な判断を軽視して理想や空想に偏りやすい。"
+  }
 };
 
 function el(tag, props={}, children=[]){
@@ -199,7 +263,7 @@ function calcResult(){
   const info = typeMap[code] || {name:"不明の型", formal:"UnknownType", desc:"対応する説明が見つかりません。"};
 
   document.getElementById("typeCode").textContent = code;
-  document.getElementById("typeFormal").textContent = `(${info.formal})`; // ← 正式名称を表示
+  document.getElementById("typeFormal").textContent = `${info.formal}`; // ← 正式名称を表示
   document.getElementById("typeName").textContent = info.name;
   document.getElementById("typeDesc").textContent = info.desc;
 
