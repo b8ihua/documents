@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>ガチャマジャ16タイプ診断</title>
+<style>
+  :root{
+    --bg:#0f1724; --card:#0b1220; --accent:#AB85DA; --muted:#98a0b3; --text:#0C1019;
+  }
+  body{font-family: "Yu Gothic UI", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+       background: #fefefe;
+       color:var(--text); margin:0; padding:24px;}
+  .wrap{max-width:900px;margin:0 auto;}
+  header{display:flex;align-items:center;gap:16px;margin-bottom:18px;}
+  h1{margin:0;font-size:20px;}
+  p.lead{margin:6px 0 18px;color:var(--muted);}
+  .card{background:#fafafa;
+        border:1px solid rgba(255,255,255,0.04);
+        padding:18px;border-radius:12px;margin-bottom:18px;}
+  .question{display:grid;grid-template-columns:1fr 240px;gap:12px;align-items:center;padding:8px 0;border-bottom:1px dashed rgba(255,255,255,0.03);}
+  .question:last-child{border-bottom:0;}
+  .qtext{font-size:15px;}
+  .options{display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap;}
+  label.opt{background:rgba(255,255,255,0.02); padding:8px 10px;border-radius:8px;cursor:pointer;border:1px solid transparent;}
+  input[type="radio"]{display:none;}
+  input[type="radio"]:checked + .opt{background:linear-gradient(90deg, rgba(171,133,218,0.12), rgba(171,133,218,0.06)); border-color: rgba(171,133,218,0.25);}
+  .small{font-size:13px;color:var(--muted);}
+  .btns{display:flex;gap:10px;margin-top:12px;}
+  button.btn{background:var(--accent);color:#071022;border:0;padding:10px 14px;border-radius:10px;font-weight:700;cursor:pointer;}
+  button.ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--text);}
+  .result{margin-top:18px;padding:14px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02));border:1px solid rgba(255,255,255,0.03);}
+  .typecode{font-weight:900;font-size:20px;color:var(--accent);}
+  .typename{font-size:18px;margin-top:6px;}
+  .desc{margin-top:8px;color:var(--muted);line-height:1.6;}
+  pre.map{background:#071323;padding:12px;border-radius:8px;overflow:auto;font-size:13px;}
+  footer{margin-top:22px;color:var(--muted);font-size:13px;text-align:center;}
+  @media(max-width:700px){ .question{grid-template-columns:1fr;} .options{justify-content:flex-start;} }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <h1>ガチャマジャ16タイプ診断</h1>
+        <p class="lead">10問に1〜5で答えて、あなたのガチャ／マジャのリズムを判定します。1＝最も思う、5＝最も思わない。</p>
+      </div>
+    </header>
+
+    <div class="card" id="quiz">
+      <!-- Questions -->
+      <!-- We'll enumerate Q1..Q10. Each radio group named q1..q10 value 1..5 -->
+      <!-- Question text matches the set used earlier -->
+      <div id="questions">
+        <!-- template for questions (filled by JS if needed) -->
+      </div>
+
+      <div class="btns">
+        <button class="btn" id="calcBtn">診断する</button>
+        <button class="ghost" id="resetBtn">リセット</button>
+      </div>
+
+      <div id="resultArea" class="result" style="display:none;">
+        <div>あなたのタイプ： <span class="typecode" id="typeCode"></span></div>
+        <div class="typename" id="typeName"></div>
+        <div class="desc" id="typeDesc"></div>
+
+        <div style="margin-top:12px;display:flex;gap:8px;align-items:center;">
+          <button class="btn" id="copyBtn">結果をコピー</button>
+          <button class="ghost" id="detailBtn">16タイプ一覧を見る</button>
+        </div>
+      </div>
+    </div>
+
+   
+<br>
+    <div class="card" id="typesCard" style="display:none;">
+      <h3>16タイプ一覧</h3>
+      <pre class="map" id="typesList">
+GCGC : ガチャンカの先駆者
+GCGJ : 華ガチャ舞い
+GCMC : 静ガチャ忍者
+GCMJ : 柔ガチャ導師
+
+GJGC : 自由ガチャ探検隊
+GJGJ : 光ガチャ芸人
+GJMC : 月影ガチャ旅人
+GJMJ : 風花ガチャ表現者
+
+MCGC : 研ぎマジャ実務者
+MCGJ : マジャ分析士
+MCMC : マジャ観察者
+MCMJ : マジャ支援団
+
+MJGC : マジャ調律団
+MJGJ : 夢マジャ紡ぎ手
+MJMC : マジャ探求者
+MJMJ : マジャ詩人団
+      </pre>
+    </div>
+
+    <footer>作成：ガチャマジャ診断ジェネレーター — 保存して自由にお使いください。</footer>
+  </div>
+
+<script>
+/*
+ Questions and their mapping:
+ For each question we define which side 'agree' (low number) supports.
+ s = 3 - answer  => 1=>+2, 2=>+1, 3=>0, 4=>-1, 5=>-2
+ For a question that supports the "first" letter in axis, dir = +1
+ If it supports the "second" letter, dir = -1
+
+ Axis grouping:
+ Axis1 (pos1): Q1,Q2,Q3  -> decides G (pos) vs M (neg)
+ Axis2 (pos2): Q4,Q5,Q6  -> decides C (pos) vs J (neg)
+ Axis3 (pos3): Q7,Q8     -> decides G (pos) vs M (neg)
+ Axis4 (pos4): Q9,Q10    -> decides C (pos) vs J (neg)
+*/
+
+const questions = [
+  {id:1, text:"新しい人と出会うのが楽しいと感じる。", side:"G"}, // G when agree
+  {id:2, text:"静かな場所で一人の時間を過ごすと落ち着く。", side:"M"}, // M when agree
+  {id:3, text:"人前で話すことに抵抗がない。", side:"G"}, // G when agree
+
+  {id:4, text:"予定やルールがきちんと決まっている方が安心する。", side:"C"}, // C when agree
+  {id:5, text:"計画よりも、その場のノリで行動することが多い。", side:"J"}, // J when agree
+  {id:6, text:"思いついたことをすぐ試したくなる。", side:"J"}, // J when agree
+
+  {id:7, text:"何か思い立ったらすぐ動くタイプだ。", side:"G"}, // G when agree
+  {id:8, text:"考えてから行動することが多い。", side:"M"}, // M when agree
+
+  {id:9, text:"物事を決めるときは、論理的に考える方だ。", side:"C"}, // C when agree
+  {id:10,text:"直感やひらめきを大事にしている。", side:"J"} // J when agree
+];
+
+const typeMap = {
+  "GCGC": {name:"ガチャンカ先駆者", desc:""},
+  "GCGJ": {name:"ガチャ舞い人", desc:""},
+  "GCMC": {name:"ガチャ忍者", desc:""},
+  "GCMJ": {name:"ガチャ導師", desc:""},
+  "GJGC": {name:"自由ガチャ探検隊", desc:""},
+  "GJGJ": {name:"光ガチャ芸人", desc:""},
+  "GJMC": {name:"ガチャ旅人", desc:""},
+  "GJMJ": {name:"ガチャ表現者", desc:""},
+  "MCGC": {name:"研ぎマジャ実務者", desc:""},
+  "MCGJ": {name:"マジャ分析士", desc:""},
+  "MCMC": {name:"マジャ観察者", desc:""},
+  "MCMJ": {name:"マジャ支援団", desc:""},
+  "MJGC": {name:"マジャ調律団", desc:""},
+  "MJGJ": {name:"夢マジャ紡ぎ手", desc:""},
+  "MJMC": {name:"マジャ探求者", desc:""},
+  "MJMJ": {name:"マジャ詩人団", desc:""}
+};
+
+function el(tag, props={}, children=[]){
+  const e = document.createElement(tag);
+  for(const k in props) e.setAttribute(k, props[k]);
+  (Array.isArray(children)?children:[children]).forEach(c=>{
+    if(typeof c === "string") e.appendChild(document.createTextNode(c));
+    else if(c) e.appendChild(c);
+  });
+  return e;
+}
+
+function buildQuestions(){
+  const container = document.getElementById("questions");
+  questions.forEach(q=>{
+    const qdiv = el("div",{class:"question"});
+    const qtext = el("div",{class:"qtext"},[
+      el("div",{},[`Q${q.id}. ${q.text}`]),
+      el("div",{class:"small"}, ["（1＝最も思う、5＝最も思わない）"])
+    ]);
+    const opts = el("div",{class:"options"});
+    for(let v=1;v<=5;v++){
+      const id = `q${q.id}v${v}`;
+      const radio = el("input",{type:"radio", name:`q${q.id}`, id:id, value:String(v)});
+      // default select 3 (どちらでもない) for all
+      if(v===3) radio.checked = true;
+      const label = el("label",{class:"opt", for:id},[String(v)]);
+      opts.appendChild(radio); opts.appendChild(label);
+    }
+    qdiv.appendChild(qtext);
+    qdiv.appendChild(opts);
+    container.appendChild(qdiv);
+  });
+}
+
+function resetForm(){
+  questions.forEach(q=>{
+    const radios = document.getElementsByName(`q${q.id}`);
+    radios.forEach(r=> r.checked = (r.value==="3"));
+  });
+  document.getElementById("resultArea").style.display = "none";
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function calcResult(){
+  // fetch answers
+  const answers = [];
+  for(const q of questions){
+    const radios = document.getElementsByName(`q${q.id}`);
+    let val = null;
+    radios.forEach(r=>{ if(r.checked) val = Number(r.value); });
+    if(val===null){ alert("すべての質問に回答してください"); return; }
+    answers.push(val);
+  }
+
+  // helper: s = 3 - a
+  const svals = answers.map(a => 3 - a); // range -2..+2
+
+  // axis calculations
+  // Axis1 (G vs M): Q1,Q2,Q3 -> indices 0,1,2
+  // for each question, direction: +1 if supports G, -1 if supports M
+  const dir = questions.map(q=> {
+    // map side to dir relative to axis letter for that question's axis:
+    // We'll use: for axis1 -> G positive, M negative.
+    // For axis2 -> C positive, J negative.
+    // For axis3 -> G positive, M negative.
+    // For axis4 -> C positive, J negative.
+    return q.side; // keep side for mapping below
+  });
+
+  // compute sums
+  // Axis1:
+  let axis1 = 0; // positive -> G, negative -> M
+  [0,1,2].forEach(i=>{
+    const side = dir[i];
+    const s = svals[i];
+    const d = (side === "G") ? +1 : -1; // G vs M
+    axis1 += s * d;
+  });
+
+  // Axis2:
+  let axis2 = 0; // positive -> C, negative -> J
+  [3,4,5].forEach(i=>{
+    const side = dir[i];
+    const s = svals[i];
+    const d = (side === "C") ? +1 : -1; // C vs J
+    axis2 += s * d;
+  });
+
+  // Axis3:
+  let axis3 = 0; // positive -> G, negative -> M
+  [6,7].forEach(i=>{
+    const side = dir[i];
+    const s = svals[i];
+    const d = (side === "G") ? +1 : -1;
+    axis3 += s * d;
+  });
+
+  // Axis4:
+  let axis4 = 0; // positive -> C, negative -> J
+  [8,9].forEach(i=>{
+    const side = dir[i];
+    const s = svals[i];
+    const d = (side === "C") ? +1 : -1;
+    axis4 += s * d;
+  });
+
+  // determine letters: tie (==0) -> choose the "first" letter (G or C) to be slightly favorable
+  const letter1 = (axis1 >= 0) ? "G" : "M";
+  const letter2 = (axis2 >= 0) ? "C" : "J";
+  const letter3 = (axis3 >= 0) ? "G" : "M";
+  const letter4 = (axis4 >= 0) ? "C" : "J";
+
+  const code = `${letter1}${letter2}${letter3}${letter4}`;
+
+  // lookup name
+  const info = typeMap[code] || {name:"不明の型", desc:"対応する説明が見つかりません。"};
+  // show result
+  document.getElementById("typeCode").textContent = code;
+  document.getElementById("typeName").textContent = info.name;
+  document.getElementById("typeDesc").textContent = info.desc +
+    `\n\n（軸値） axis1=${axis1.toFixed(1)}, axis2=${axis2.toFixed(1)}, axis3=${axis3.toFixed(1)}, axis4=${axis4.toFixed(1)} `;
+
+  document.getElementById("resultArea").style.display = "block";
+  // scroll into view
+  document.getElementById("resultArea").scrollIntoView({behavior:"smooth"});
+}
+
+document.addEventListener("DOMContentLoaded", ()=>{
+  buildQuestions();
+  document.getElementById("calcBtn").addEventListener("click", calcResult);
+  document.getElementById("resetBtn").addEventListener("click", resetForm);
+  document.getElementById("copyBtn").addEventListener("click", ()=>{
+    const code = document.getElementById("typeCode").textContent;
+    const name = document.getElementById("typeName").textContent;
+    const desc = document.getElementById("typeDesc").textContent;
+    const text = `ガチャマジャ診断結果： ${code} ${name}\n${desc}`;
+    navigator.clipboard?.writeText(text).then(()=> alert("結果をコピーしました。"), ()=> alert("コピーに失敗しました"));
+  });
+  document.getElementById("detailBtn").addEventListener("click", ()=>{
+    const card = document.getElementById("typesCard");
+    card.style.display = card.style.display === "none" ? "block" : "none";
+    card.scrollIntoView({behavior:"smooth"});
+  });
+});
+</script>
+</body>
+</html>
