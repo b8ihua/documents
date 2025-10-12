@@ -55,17 +55,23 @@
         <button class="ghost" id="resetBtn">リセット</button>
       </div>
 
-      <div id="resultArea" class="result" style="display:none;">
-        <div style="text-align:center;" >あなたのタイプ<br> <span class="typecode"style="text-align:center;font-size:40px;" id="typeCode"></span></div>
-        <div style="text-align:center; font-size:20px; font-weight:900;" class="small" id="typeFormal"></div> <!-- 正式名称表示 -->
-        <div style="text-align:center; font-size:25px; font-weight:900;" class="typename" id="typeName"></div>
-        <div class="desc" id="typeDesc"></div>
+     <div id="resultArea" class="result" style="display:none;">
+  <div style="text-align:center;">あなたのタイプ<br>
+    <span class="typecode" style="text-align:center;font-size:40px;" id="typeCode"></span>
+  </div>
+  <div style="text-align:center; font-size:20px; font-weight:900;" class="small" id="typeFormal"></div>
 
-        <div style="margin-top:12px;display:flex;gap:8px;align-items:center;">
-          <button class="btn" id="copyBtn">結果をコピー</button>
-          <button class="ghost" id="detailBtn">16タイプ一覧を見る</button>
-        </div>
-      </div>
+  <!-- タイプ名と説明をまとめてセンタリング -->
+  <div style="text-align:center; margin-top:12px;">
+    <div class="typename" id="typeName" style="font-size:25px; font-weight:900; margin-bottom:8px;"></div>
+    <div class="desc" id="typeDesc" style="max-width:600px; margin:0 auto; color:var(--muted); line-height:1.6;"></div>
+  </div>
+
+  <div style="margin-top:12px;display:flex;gap:8px;align-items:center;justify-content:center;">
+    <button class="btn" id="copyBtn">結果をコピー</button>
+    <button class="ghost" id="detailBtn">16タイプ一覧を見る</button>
+  </div>
+</div>
     </div>
 
 <br>
@@ -112,22 +118,22 @@ const questions = [
 ];
 
 const typeMap = {
-  "GCGC": {name:"トコさん", formal:"GachancaGachanca", desc:""},
-  "GCGJ": {name:"ガチャ舞い人", formal:"GachancaGajanca", desc:""},
-  "GCMC": {name:"ガチャ忍者", formal:"GachancaMachanca", desc:""},
-  "GCMJ": {name:"ガチャンカ・マジャンカ", formal:"GachancaMajanca", desc:""},
-  "GJGC": {name:"自由ガチャ探検隊", formal:"GajancaGachanca", desc:""},
-  "GJGJ": {name:"光ガチャ芸人", formal:"GajancaGajanca", desc:""},
-  "GJMC": {name:"ガチャ旅人", formal:"GajancaMachanca", desc:""},
-  "GJMJ": {name:"ガチャ表現者", formal:"GajancaMajanca", desc:""},
-  "MCGC": {name:"研ぎマジャ実務者", formal:"MachancaGachanca", desc:""},
-  "MCGJ": {name:"マジャ分析士", formal:"MachancaGajanca", desc:""},
-  "MCMC": {name:"マジャ観察者", formal:"MachancaMachanca", desc:""},
-  "MCMJ": {name:"マジャ支援団", formal:"MachancaMajanca", desc:""},
-  "MJGC": {name:"マジャ調律団", formal:"MajancaGachanca", desc:""},
-  "MJGJ": {name:"夢マジャ紡ぎ手", formal:"MajancaGajanca", desc:""},
-  "MJMC": {name:"マジャ探求者", formal:"MajancaMachanca", desc:""},
-  "MJMJ": {name:"レオン", formal:"MajancaMajanca", desc:""}
+  "GCGC": {name:"トコさん", formal:"GachancaGachanca", desc:"エネルギッシュで直進型。思い立ったら即行動、リーダー向き。"},
+  "GCGJ": {name:"ガチャ舞い人", formal:"GachancaGajanca", desc:"活発で表現力豊か。場の雰囲気を読む感性も高い。"},
+  "GCMC": {name:"ガチャ忍者", formal:"GachancaMachanca", desc:"静かで落ち着きがあり、観察力に優れる。"},
+  "GCMJ": {name:"ガチャンカ・マジャンカ", formal:"GachancaMajanca", desc:"柔軟で人の相談に乗るのが得意。"},
+  "GJGC": {name:"自由ガチャ探検隊", formal:"GajancaGachanca", desc:"自由奔放で好奇心旺盛。"},
+  "GJGJ": {name:"光ガチャ芸人", formal:"GajancaGajanca", desc:"明るく人を楽しませるのが得意。"},
+  "GJMC": {name:"ガチャ旅人", formal:"GajancaMachanca", desc:"控えめだが好奇心を持って行動する。"},
+  "GJMJ": {name:"ガチャ表現者", formal:"GajancaMajanca", desc:"感性豊かで表現力が高い。"},
+  "MCGC": {name:"研ぎマジャ実務者", formal:"MachancaGachanca", desc:"地道に努力し、実務をこなすタイプ。"},
+  "MCGJ": {name:"マジャ分析士", formal:"MachancaGajanca", desc:"論理的で分析力に優れる。"},
+  "MCMC": {name:"マジャ観察者", formal:"MachancaMachanca", desc:"観察力が高く、慎重に行動する。"},
+  "MCMJ": {name:"マジャ支援団", formal:"MachancaMajanca", desc:"人をサポートするのが得意。"},
+  "MJGC": {name:"マジャ調律団", formal:"MajancaGachanca", desc:"調整役でバランスを取るのが上手。"},
+  "MJGJ": {name:"夢マジャ紡ぎ手", formal:"MajancaGajanca", desc:"想像力豊かで夢を形にするのが得意。"},
+  "MJMC": {name:"マジャ探求者", formal:"MajancaMachanca", desc:"探求心が強く、深く考えるタイプ。"},
+  "MJMJ": {name:"レオン", formal:"MajancaMajanca", desc:"創造力豊かで詩的な感性を持つ。"}
 };
 
 function el(tag, props={}, children=[]){
@@ -195,8 +201,7 @@ function calcResult(){
   document.getElementById("typeCode").textContent = code;
   document.getElementById("typeFormal").textContent = `(${info.formal})`; // ← 正式名称を表示
   document.getElementById("typeName").textContent = info.name;
-  document.getElementById("typeDesc").textContent = info.desc +
-    `\n\n（軸値） axis1=${axis1.toFixed(1)}, axis2=${axis2.toFixed(1)}, axis3=${axis3.toFixed(1)}, axis4=${axis4.toFixed(1)}`;
+  document.getElementById("typeDesc").textContent = info.desc;
 
   document.getElementById("resultArea").style.display = "block";
   document.getElementById("resultArea").scrollIntoView({behavior:"smooth"});
