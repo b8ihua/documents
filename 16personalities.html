@@ -142,60 +142,69 @@ input[type="radio"]:checked + label.v7 { background:#88619A; border-color:#88619
   pre.map{background:#fff;padding:12px;border-radius:8px;overflow:auto;font-size:13px;}
   footer{margin-top:22px;color:var(--muted);font-size:13px;text-align:center;}
   @media(max-width:700px){ .question{grid-template-columns:1fr;} .options{justify-content:flex-start;} }
-  .container {
-    margin-top:20px;
-    width: 100%;
-    border: 0.7px solid #f6f6f6;
-    border-radius: 10px;
-    overflow: hidden;
-    font-family: sans-serif;
-color: #343C4B;
-font-size:13px;
-line-height:19px;
-background:white;
-  }
 
-  .section {
-    position: relative; /* 色バーの絶対配置用 */
-    min-height: 60px;   /* セクションの高さ */
-    border-bottom: 0.7px solid #ccc;
-    padding-left: 21px; /* 色バーの幅 + 余白分 */
-    padding-top:10px;
-    padding-bottom:10px;
-    padding-right:10px;
-    display: flex;
-    align-items: center;
-  }
+.container {
+  margin-top:20px;
+  width: 100%;
+  border: 0.7px solid #f6f6f6;
+  border-radius: 10px;
+  overflow: hidden;
+  font-family: sans-serif;
+  color: #343C4B;
+  font-size:13px;
+  line-height:19px;
+  background:white;
+}
 
-  .section:last-child {
-    border-bottom: none;
-  }
+.section {
+  position: relative;
+  min-height: 60px;
+  border-bottom: 0.7px solid #ccc;
+  padding-left: 21px;
+  padding-top:10px;
+  padding-bottom:10px;
+  padding-right:10px;
+  display: flex;
+  align-items: center;
+  gap: 10px; /* 画像とテキストの間隔 */
+}
 
-  .color-bar {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 5px;
-    height: 100%;
-  }
+.section:last-child {
+  border-bottom: none;
+}
 
-  .top .color-bar {
-    background-color: #4298B4; /* 水色 */
-    border-top-left-radius: 12px;
-  }
+.color-bar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 5px;
+  height: 100%;
+}
 
-  .middle .color-bar {
-    background-color: #33A474; /* 緑 */
-  }
+.top .color-bar {
+  background-color: #4298B4;
+  border-top-left-radius: 12px;
+}
 
-  .bottom .color-bar {
-    background-color: #88619A; /* 紫 */
-    border-bottom-left-radius: 12px;
-  }
+.middle .color-bar {
+  background-color: #33A474;
+}
 
-  .text {
-    flex: 1;
-  }
+.bottom .color-bar {
+  background-color: #88619A;
+  border-bottom-left-radius: 12px;
+}
+
+.icon {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+  flex-shrink: 0; /* アイコンが縮まないように */
+}
+
+.text {
+  flex: 1;
+}
 </style>
 </head>
 <body>
@@ -212,14 +221,19 @@ background:white;
 <div class="container">
   <div class="section top">
     <div class="color-bar"></div>
+    <img src="https://b8ihua.github.io/documents/無題1408_20251015180901.png" class="icon">
     <div class="text">簡単なテストで、あなたの性格がガチャラー・マジャリストのどちらに近いかを診断します。ありのままの自分で正直に回答してください。</div>
   </div>
+
   <div class="section middle">
     <div class="color-bar"></div>
+    <img src="https://b8ihua.github.io/documents/無題1408_20251015180611.png" class="icon">
     <div class="text">一般的に、ガチャラーは社会的でエネルギッシュ、変化を恐れず新しいことに意欲的に取り組む人に多いとされています。</div>
   </div>
+
   <div class="section bottom">
     <div class="color-bar"></div>
+    <img src="https://b8ihua.github.io/documents/無題1408_20251015180003.png" class="icon">
     <div class="text">一般的に、マジャリストは型に囚われない柔軟な思考の持ち主で、人とのつながりや心の調和を大事にする人とされています。</div>
   </div>
 </div>
