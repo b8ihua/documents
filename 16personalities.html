@@ -43,7 +43,7 @@
   }
   body{font-family: "Yu Gothic UI", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
        background: #f6f6f6;
-       color:var(--text); margin:0; padding:14px;}
+       color:var(--text); margin:0; padding:0px;}
   .wrap{max-width:900px;margin:0 auto;padding-top: 90px;}
 
   header{
@@ -135,14 +135,71 @@ input[type="radio"]:checked + label.v7 { background:#88619A; border-color:#88619
   .btns{display:flex;gap:10px;margin-top:12px;}
   button.btn{background:var(--accent);color:white;border:0;padding:10px 14px;border-radius:10px;font-weight:700;cursor:pointer;}
   button.ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--text);}
-  .result{margin-top:18px;padding:14px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02));border:1px solid rgba(255,255,255,0.03);}
-  .typecode{font-weight:900;font-size:20px;color:var(--accent);}
+  .result{margin-top:18px;padding:0px;border-radius:0px;background:white;}
+  .typecode{font-weight:900;font-size:20px;color:rgba(0, 0, 0, 0.6);
+font-family: "Roboto Flex", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 600;
+  font-style: normal;
+  font-variation-settings:
+    "slnt" 0,
+    "wdth" 100,
+    "GRAD" 0,
+    "XOPQ" 96,
+    "XTRA" 468,
+    "YOPQ" 79,
+    "YTAS" 750,
+    "YTDE" -203,
+    "YTFI" 738,
+    "YTLC" 514,
+    "YTUC" 712;
+
+
+}
   .typename{font-size:18px;margin-top:6px;}
-  .desc{margin-top:8px;color:var(--muted);line-height:1.6;}
+  .desc{margin-top:0px;color:white;line-height:1.6;}
   pre.map{background:#fff;padding:12px;border-radius:8px;overflow:auto;font-size:13px;}
   footer{margin-top:22px;color:var(--muted);font-size:13px;text-align:center;}
   @media(max-width:700px){ .question{grid-template-columns:1fr;} .options{justify-content:flex-start;} }
 
+.bar-container {
+  width: 100%;
+  height: 20px;
+  display: flex;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-top: 15px;
+  background-color: #eee;
+}
+
+.bar {
+  height: 100%;
+  transition: width 0.5s ease;
+}
+
+.bar.gacha {
+  background: linear-gradient(90deg, #33A474, #2B8F60); /* 緑系グラデーション */
+}
+
+.bar.majari {
+  background: linear-gradient(90deg, #88619A, #7A4F8B); /* 紫系グラデーション */
+}
+
+.bar-text {
+  display: flex;
+  justify-content: space-between;
+  font-family: "Roboto Flex", sans-serif;
+  font-size: 14px;
+  margin-top: 5px;
+}
+
+.bar-text .g-text {
+  color: #33A474; /* ガチャ側文字色 */
+}
+
+.bar-text .m-text {
+  color: #88619A; /* マジャ側文字色 */
+}
 .container {
   margin-top:20px;
   width: 100%;
@@ -205,6 +262,67 @@ input[type="radio"]:checked + label.v7 { background:#88619A; border-color:#88619
 .text {
   flex: 1;
 }
+
+.axis-container {
+  margin-top: 20px;
+  font-family: "Roboto Flex", sans-serif;
+}
+
+.axis {
+  margin-bottom: 20px;
+}
+
+.axis-title {
+  font-size: 14px;
+  margin-bottom: -7px;
+margin-top:5px;
+text-align:left;
+}
+
+.bar-container {
+  width: 100%;
+  height: 20px;
+  display: flex;
+  border-radius: 10px;
+  overflow: hidden;
+  background-color: #eee;
+}
+
+.bar {
+  height: 100%;
+  transition: width 0.5s ease;
+}
+
+.bar.gacha {
+  background: linear-gradient(90deg, #33A474, #2B8F60);
+}
+
+.bar.majari {
+  background: linear-gradient(90deg, #88619A, #7A4F8B);
+}
+
+.axis-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  margin-top: 3px;
+  color: #555;
+}
+
+#typeImageContainer {
+  position: relative; /* 基準になる */
+  width: 100%;
+  text-align: center;
+  margin-top: 0; /* 下の余白調整はJSで設定可能 */
+}
+
+#typeImageContainer img {
+  position: relative; /* 上下に跨がせる場合は relative または absolute */
+  top: -40px; /* 上にずらす量。調整可能 */
+  z-index: 10; /* 白背景より前面に出す */
+  width: 50%; /* お好みで */
+  max-width: 300px;
+}
 </style>
 </head>
 <body>
@@ -216,8 +334,9 @@ input[type="radio"]:checked + label.v7 { background:#88619A; border-color:#88619
       </div>
     </header>
 
+<div style="padding:14px;">
 <p style="text-align:center; font-weight:900; font-size:27px; margin:0;color:#343C4B">GMTI診断テスト</p>
-<p style="text-align:center; font-size:17px; color:#343C4B; margin:0;" class="roboto-flex-custom {">GMTI Type Explorer</p>
+<p style="text-align:center; font-size:17px; color:#343C4B; margin:0;" class="roboto-flex-custom">GMTI Type Explorer</p>
 <div class="container">
   <div class="section top">
     <div class="color-bar"></div>
@@ -245,26 +364,37 @@ input[type="radio"]:checked + label.v7 { background:#88619A; border-color:#88619
       <div class="btns">
         <button class="btn" id="calcBtn">診断する</button>
         <button class="ghost" id="resetBtn">リセット</button>
-      </div>
+      </div></div></div>
 
-     <div id="resultArea" class="result" style="display:none;">
-  <div style="text-align:center;">あなたのタイプ<br>
-    <span class="typecode" style="text-align:center;font-size:40px;" id="typeCode"></span>
-  </div>
-  <div style="font-size:25px; font-weight:900; margin-bottom:8px; color:black;" class="small" id="typeFormal"></div>
+    <div id="resultArea" class="result" style="display:none;">
+  <div id="typeHeader" style="text-align:center; padding:10px; border-radius:0px; ">
+    あなたの性格タイプ<br>
+    
+    <div style="font-size:25px; font-weight:900; margin-top:8px; color:white;" class="small" id="typeFormal"></div>
+  
 
   <!-- タイプ名と説明をまとめてセンタリング -->
-  <div style="text-align:center; margin-top:12px;">
-    <div class="typename" id="typeName" style="text-align:center; font-size:20px; font-weight:900; color:gray; margin:-15px 0px 15px 0px;"></div>
-    <div class="desc" id="typeDesc" style="max-width:600px; margin:0 auto; color:var(--muted); line-height:1.6;"></div>
+  
+    <div class="typename" id="typeName" style="text-align:center; font-size:20px; font-weight:900; color:white; margin:5px 0px 15px 0px;"></div><span class="typecode" style="text-align:center;font-size:40px;margin-bottom:10px; display:inline-block;"  id="typeCode"></span>
+
+<div id="typeImageContainer"></div>
+
+</div>
+<div style="padding:14px;">
+<div style="text-align:center; margin-top:8px;">
+
+
+    <div class="desc" id="typeDesc" style="max-width:600px; margin-top:90px; color:#343C4B; line-height:1.6;"></div>
   </div>
 
+<div class="axis-container" id="axisContainer">
+  <!-- JavaScriptでここに軸バーを生成 -->
+</div>
   <div style="margin-top:12px;display:flex;gap:8px;align-items:center;justify-content:center;">
     <button class="btn" id="copyBtn">結果をコピー</button>
     <button class="ghost" id="detailBtn">16タイプ一覧を見る</button>
   </div>
-</div>
-    </div>
+</div></div>
 
 <br>
     <div class="card" id="typesCard" style="display:none;">
@@ -440,53 +570,169 @@ function resetForm(){
   window.scrollTo({top:0,behavior:"smooth"});
 }
 
-function calcResult(){
+function calcResult() {
+
   const answers = [];
-  for(const q of questions){
+  for (const q of questions) {
     const radios = document.getElementsByName(`q${q.id}`);
     let val = null;
-    radios.forEach(r=>{ if(r.checked) val = Number(r.value); });
-    if(val===null){ alert("すべての質問に回答してください"); return; }
+    radios.forEach(r => { if (r.checked) val = Number(r.value); });
+    if (val === null) { alert("すべての質問に回答してください"); return; }
     answers.push(val);
   }
 
-  // 中立値4からの差
+  // 中立値4からの差を取る
   const svals = answers.map(a => 4 - a);
 
-  let axis1=0, axis2=0, axis3=0, axis4=0;
-
-  svals.forEach((v,i)=>{
+  let axis1 = 0, axis2 = 0, axis3 = 0, axis4 = 0;
+  svals.forEach((v, i) => {
     const side = questions[i].side;
-
-    // 1桁目: G1/M1
-    if(side==="G1") axis1 += v;       // G寄りはプラス
-    else if(side==="M1") axis1 -= v;  // M寄りは逆に
-
-    // 2桁目: C1/J1
-    else if(side==="C1") axis2 += v;
-    else if(side==="J1") axis2 -= v;
-
-    // 3桁目: G2/M2
-    else if(side==="G2") axis3 += v;
-    else if(side==="M2") axis3 -= v;
-
-    // 4桁目: C2/J2
-    else if(side==="C2") axis4 += v;
-    else if(side==="J2") axis4 -= v;
+    if (side === "G1") axis1 += v;
+    else if (side === "M1") axis1 -= v;
+    else if (side === "C1") axis2 += v;
+    else if (side === "J1") axis2 -= v;
+    else if (side === "G2") axis3 += v;
+    else if (side === "M2") axis3 -= v;
+    else if (side === "C2") axis4 += v;
+    else if (side === "J2") axis4 -= v;
   });
 
-  const code = `${axis1>=0?"G":"M"}${axis2>=0?"C":"J"}${axis3>=0?"G":"M"}${axis4>=0?"C":"J"}`;
-
-  const info = typeMap[code] || {name:"不明の型", formal:"UnknownType", desc:"対応する説明が見つかりません。"};
+  const code = `${axis1 >= 0 ? "G" : "M"}${axis2 >= 0 ? "C" : "J"}${axis3 >= 0 ? "G" : "M"}${axis4 >= 0 ? "C" : "J"}`;
+  const info = typeMap[code] || { name: "不明の型", formal: "UnknownType", desc: "対応する説明が見つかりません。" };
 
   document.getElementById("typeCode").textContent = code;
   document.getElementById("typeFormal").textContent = info.formal;
   document.getElementById("typeName").textContent = info.name;
   document.getElementById("typeDesc").textContent = info.desc;
 
-  document.getElementById("resultArea").style.display = "block";
-  document.getElementById("resultArea").scrollIntoView({behavior:"smooth"});
+  // === ガチャラー／マジャリスト割合 ===
+  let gSum = 0, mSum = 0;
+  svals.forEach((v, i) => {
+    const side = questions[i].side;
+    if (side.startsWith("G") || side.startsWith("C")) gSum += v;
+    else if (side.startsWith("M") || side.startsWith("J")) mSum += v;
+  });
+
+  const total = Math.abs(gSum) + Math.abs(mSum) || 1;
+  const gPercent = Math.round((Math.abs(gSum) / total) * 100);
+  const mPercent = 100 - gPercent;
+  const finalType = gPercent >= mPercent ? "ガチャラー" : "マジャリスト";
+
+  // ヘッダー色変更
+  const typeHeader = document.getElementById("typeHeader");
+  typeHeader.style.backgroundColor = finalType === "ガチャラー" ? "#33A474" : "#88619A";
+  typeHeader.style.color = "white";
+
+
+const imgContainer = document.getElementById("typeImageContainer");
+imgContainer.innerHTML = ""; // まず空にする
+
+let img = document.createElement("img");
+img.style.width = "60%"; // お好みでサイズ調整img.style.position = "absolute";
+ img.style.top = "100px";
+img.style.marginTop = "-100px"; // typecodeとの間の余白
+
+
+if(finalType === "ガチャラー"){
+    img.src = "https://b8ihua.github.io/documents/無題1411_20251016235146.png";
+} else if(finalType === "マジャリスト"){
+    img.src = "https://b8ihua.github.io/documents/無題1411_20251016235156.png";
 }
+
+
+imgContainer.appendChild(img);
+
+  // 結果バー
+  const barContainer = document.createElement("div");
+  barContainer.className = "bar-container";
+  barContainer.innerHTML = `
+    <div class="bar gacha" style="width:${gPercent}%"></div>
+    <div class="bar majari" style="width:${mPercent}%"></div>
+  `;
+  const barText = document.createElement("div");
+  barText.className = "bar-text";
+  barText.innerHTML = `
+    <span class="g-text">ガチャラー ${gPercent}%</span>
+    <span class="m-text">マジャリスト ${mPercent}%</span>
+  `;
+  const resultArea = document.getElementById("resultArea");
+
+  // === 各軸バー ===
+  const axisData = [
+    { name: "エネルギー", value: axis1, gLabel: "外向型", mLabel: "内向型" },
+    { name: "性質", value: axis2, gLabel: "革新", mLabel: "調和" },
+    { name: "性格", value: axis3, gLabel: "適当", mLabel: "執着" },
+    { name: "創造性", value: axis4, gLabel: "現実的", mLabel: "創造的" },
+  ];
+
+  function axisToPercent(val) {
+    const max = 12; // 最大値に合わせて調整
+    let p = ((val + max) / (2 * max)) * 100;
+    if (p > 100) p = 100;
+    if (p < 0) p = 0;
+    return Math.round(p);
+  }
+
+  const axisContainer = document.createElement("div");
+  axisContainer.className = "axis-container";
+
+  axisData.forEach(axis => {
+    const percent = axisToPercent(axis.value);
+    const isG = axis.value >= 0; // ガチャラー寄りか判定
+    const labelText = `${percent}% ${isG ? axis.gLabel : axis.mLabel}`;
+
+    const axisDiv = document.createElement("div");
+    axisDiv.className = "axis";
+
+    const title = document.createElement("div");
+    title.className = "axis-title";
+    title.textContent = `${axis.name}: ${labelText}`;
+    axisDiv.appendChild(title);
+
+    const barCont = document.createElement("div");
+    barCont.className = "bar-container";
+
+    const gachaBar = document.createElement("div");
+    gachaBar.className = "bar gacha";
+    gachaBar.style.width = `${percent}%`;
+
+    const majariBar = document.createElement("div");
+    majariBar.className = "bar majari";
+    majariBar.style.width = `${100 - percent}%`;
+
+    barCont.appendChild(gachaBar);
+    barCont.appendChild(majariBar);
+    axisDiv.appendChild(barCont);
+
+    const labels = document.createElement("div");
+    labels.className = "axis-labels";
+    labels.innerHTML = `<span>${axis.gLabel}</span><span>${axis.mLabel}</span>`;
+    axisDiv.appendChild(labels);
+
+    axisContainer.appendChild(axisDiv);
+  });
+
+  const desc = document.getElementById("typeDesc");
+
+// 「性格特性」タイトルを作成
+const traitTitle = document.createElement("div");
+traitTitle.textContent = "性格特性";
+traitTitle.style.color = "#343C4B";
+traitTitle.style.fontSize = "22px";
+traitTitle.style.fontWeight = "700";
+traitTitle.style.textAlign = "left";
+traitTitle.style.margin = "16px 0";
+
+// バーとタイトルを順番に挿入
+desc.insertAdjacentElement("afterend", traitTitle);
+traitTitle.insertAdjacentElement("afterend", barContainer);
+barContainer.insertAdjacentElement("afterend", barText);
+barText.insertAdjacentElement("afterend", axisContainer);
+
+  resultArea.style.display = "block";
+  resultArea.scrollIntoView({ behavior: "smooth" });
+}
+
 document.addEventListener("DOMContentLoaded", ()=>{
   buildQuestions();
   document.getElementById("calcBtn").addEventListener("click", calcResult);
