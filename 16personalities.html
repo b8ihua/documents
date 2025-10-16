@@ -1,6 +1,8 @@
 <!doctype html>
 <html lang="ja">
 <head>
+<!-- Favicon -->
+  <link rel="icon" href="https://b8ihua.github.io/documents/無題1413_20251017012211.png" type="image/png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Lusitana:wght@400;700&family=Roboto+Flex:opsz,wght@8..144,100..1000&display=swap" rel="stylesheet">
@@ -57,7 +59,7 @@ display:flex;align-items:center;gap:16px;margin-bottom:18px;position: fixed;
 font-family: serif;
 color:#444;
 line-height:20px;
-  padding: 16px 24px;}
+  padding: 16px 24px 16px 14px;}
   h1{margin:0;font-size:17px;}
   p.lead{margin:6px 0 18px;color:var(--muted);}
   .card{
@@ -323,16 +325,25 @@ text-align:left;
   width: 50%; /* お好みで */
   max-width: 300px;
 }
+
+.header-logo {
+  
+  height: 40px;
+  object-fit: contain;
+}
 </style>
 </head>
 <body>
   <div class="wrap">
     <header>
-      <div class="lusitana-regular">
-        <h1>Gachanca-Majanca <br><font color="946FC3">16 </font>Personalities</h1>
-        
-      </div>
-    </header>
+  <div class="lusitana-regular" style="display: flex; align-items: center;">
+    <img src="https://b8ihua.github.io/documents/無題1406_20251017011253.jpeg" alt="ロゴ" class="header-logo">
+    <h1 style="margin-left: 12px;">
+      Gachanca-Majanca <br>
+      <font color="#946FC3">16 </font>Personalities
+    </h1>
+  </div>
+</header>
 
 <div style="padding:14px;">
 <p style="text-align:center; font-weight:900; font-size:27px; margin:0;color:#343C4B">GMTI診断テスト</p>
@@ -571,7 +582,6 @@ function resetForm(){
 }
 
 function calcResult() {
-
   const answers = [];
   for (const q of questions) {
     const radios = document.getElementsByName(`q${q.id}`);
@@ -581,36 +591,41 @@ function calcResult() {
     answers.push(val);
   }
 
-  // 中立値4からの差を取る
   const svals = answers.map(a => 4 - a);
 
   let axis1 = 0, axis2 = 0, axis3 = 0, axis4 = 0;
+  let axisCount = [0,0,0,0]; // 軸ごとの質問数カウント
+
   svals.forEach((v, i) => {
     const side = questions[i].side;
-    if (side === "G1") axis1 += v;
-    else if (side === "M1") axis1 -= v;
-    else if (side === "C1") axis2 += v;
-    else if (side === "J1") axis2 -= v;
-    else if (side === "G2") axis3 += v;
-    else if (side === "M2") axis3 -= v;
-    else if (side === "C2") axis4 += v;
-    else if (side === "J2") axis4 -= v;
+    let gachalerDelta = 0;
+    let majalistDelta = 0;
+
+    if (side.startsWith("G") || side.startsWith("C")) {
+      if (v < 0) majalistDelta = Math.abs(v);
+      else gachalerDelta = v;
+    } else if (side.startsWith("M") || side.startsWith("J")) {
+      if (v < 0) gachalerDelta = Math.abs(v);
+      else majalistDelta = v;
+    }
+
+    if (side === "G1" || side === "M1") { axis1 += (gachalerDelta - majalistDelta); axisCount[0]++; }
+    else if (side === "C1" || side === "J1") { axis2 += (gachalerDelta - majalistDelta); axisCount[1]++; }
+    else if (side === "G2" || side === "M2") { axis3 += (gachalerDelta - majalistDelta); axisCount[2]++; }
+    else if (side === "C2" || side === "J2") { axis4 += (gachalerDelta - majalistDelta); axisCount[3]++; }
   });
-
-  const code = `${axis1 >= 0 ? "G" : "M"}${axis2 >= 0 ? "C" : "J"}${axis3 >= 0 ? "G" : "M"}${axis4 >= 0 ? "C" : "J"}`;
-  const info = typeMap[code] || { name: "不明の型", formal: "UnknownType", desc: "対応する説明が見つかりません。" };
-
-  document.getElementById("typeCode").textContent = code;
-  document.getElementById("typeFormal").textContent = info.formal;
-  document.getElementById("typeName").textContent = info.name;
-  document.getElementById("typeDesc").textContent = info.desc;
 
   // === ガチャラー／マジャリスト割合 ===
   let gSum = 0, mSum = 0;
   svals.forEach((v, i) => {
     const side = questions[i].side;
-    if (side.startsWith("G") || side.startsWith("C")) gSum += v;
-    else if (side.startsWith("M") || side.startsWith("J")) mSum += v;
+    if (side.startsWith("G") || side.startsWith("C")) {
+      if (v >= 0) gSum += v;
+      else mSum += Math.abs(v);
+    } else if (side.startsWith("M") || side.startsWith("J")) {
+      if (v >= 0) mSum += v;
+      else gSum += Math.abs(v);
+    }
   });
 
   const total = Math.abs(gSum) + Math.abs(mSum) || 1;
@@ -618,31 +633,31 @@ function calcResult() {
   const mPercent = 100 - gPercent;
   const finalType = gPercent >= mPercent ? "ガチャラー" : "マジャリスト";
 
-  // ヘッダー色変更
+  const codeBase = `${axis1 >= 0 ? "G" : "M"}${axis2 >= 0 ? "C" : "J"}${axis3 >= 0 ? "G" : "M"}${axis4 >= 0 ? "C" : "J"}`;
+  const displayCode = codeBase + (finalType === "ガチャラー" ? "-G" : "-M");
+  const info = typeMap[codeBase] || { name: "不明の型", formal: "UnknownType", desc: "対応する説明が見つかりません。" };
+
+  document.getElementById("typeCode").textContent = displayCode;
+  document.getElementById("typeFormal").textContent = info.formal;
+  document.getElementById("typeName").textContent = info.name;
+  document.getElementById("typeDesc").textContent = info.desc;
+
   const typeHeader = document.getElementById("typeHeader");
   typeHeader.style.backgroundColor = finalType === "ガチャラー" ? "#33A474" : "#88619A";
   typeHeader.style.color = "white";
 
+  const imgContainer = document.getElementById("typeImageContainer");
+  imgContainer.innerHTML = "";
+  let img = document.createElement("img");
+  img.style.width = "60%";
+  
+  img.style.top = "100px";
+  img.style.marginTop = "-100px";
+  img.src = finalType === "ガチャラー"
+    ? "https://b8ihua.github.io/documents/無題1411_20251016235146.png"
+    : "https://b8ihua.github.io/documents/無題1411_20251016235156.png";
+  imgContainer.appendChild(img);
 
-const imgContainer = document.getElementById("typeImageContainer");
-imgContainer.innerHTML = ""; // まず空にする
-
-let img = document.createElement("img");
-img.style.width = "60%"; // お好みでサイズ調整img.style.position = "absolute";
- img.style.top = "100px";
-img.style.marginTop = "-100px"; // typecodeとの間の余白
-
-
-if(finalType === "ガチャラー"){
-    img.src = "https://b8ihua.github.io/documents/無題1411_20251016235146.png";
-} else if(finalType === "マジャリスト"){
-    img.src = "https://b8ihua.github.io/documents/無題1411_20251016235156.png";
-}
-
-
-imgContainer.appendChild(img);
-
-  // 結果バー
   const barContainer = document.createElement("div");
   barContainer.className = "bar-container";
   barContainer.innerHTML = `
@@ -657,16 +672,16 @@ imgContainer.appendChild(img);
   `;
   const resultArea = document.getElementById("resultArea");
 
-  // === 各軸バー ===
   const axisData = [
-    { name: "エネルギー", value: axis1, gLabel: "外向型", mLabel: "内向型" },
-    { name: "性質", value: axis2, gLabel: "革新", mLabel: "調和" },
-    { name: "性格", value: axis3, gLabel: "適当", mLabel: "執着" },
-    { name: "創造性", value: axis4, gLabel: "現実的", mLabel: "創造的" },
+    { name: "エネルギー", value: axis1, count: axisCount[0], gLabel: "外向型", mLabel: "内向型" },
+    { name: "性質", value: axis2, count: axisCount[1], gLabel: "革新", mLabel: "調和" },
+    { name: "性格", value: axis3, count: axisCount[2], gLabel: "適当", mLabel: "執着" },
+    { name: "創造性", value: axis4, count: axisCount[3], gLabel: "現実的", mLabel: "創造的" },
   ];
 
-  function axisToPercent(val) {
-    const max = 12; // 最大値に合わせて調整
+  function axisToPercent(val, count) {
+    const maxPerQuestion = 3; // 1問の最大偏差 = 3 (中立4 → 1 or 7)
+    const max = count * maxPerQuestion;
     let p = ((val + max) / (2 * max)) * 100;
     if (p > 100) p = 100;
     if (p < 0) p = 0;
@@ -677,8 +692,8 @@ imgContainer.appendChild(img);
   axisContainer.className = "axis-container";
 
   axisData.forEach(axis => {
-    const percent = axisToPercent(axis.value);
-    const isG = axis.value >= 0; // ガチャラー寄りか判定
+    const percent = axisToPercent(axis.value, axis.count);
+    const isG = axis.value >= 0;
     const labelText = `${percent}% ${isG ? axis.gLabel : axis.mLabel}`;
 
     const axisDiv = document.createElement("div");
@@ -713,26 +728,22 @@ imgContainer.appendChild(img);
   });
 
   const desc = document.getElementById("typeDesc");
+  const traitTitle = document.createElement("div");
+  traitTitle.textContent = "性格特性";
+  traitTitle.style.color = "#343C4B";
+  traitTitle.style.fontSize = "22px";
+  traitTitle.style.fontWeight = "700";
+  traitTitle.style.textAlign = "left";
+  traitTitle.style.margin = "16px 0";
 
-// 「性格特性」タイトルを作成
-const traitTitle = document.createElement("div");
-traitTitle.textContent = "性格特性";
-traitTitle.style.color = "#343C4B";
-traitTitle.style.fontSize = "22px";
-traitTitle.style.fontWeight = "700";
-traitTitle.style.textAlign = "left";
-traitTitle.style.margin = "16px 0";
-
-// バーとタイトルを順番に挿入
-desc.insertAdjacentElement("afterend", traitTitle);
-traitTitle.insertAdjacentElement("afterend", barContainer);
-barContainer.insertAdjacentElement("afterend", barText);
-barText.insertAdjacentElement("afterend", axisContainer);
+  desc.insertAdjacentElement("afterend", traitTitle);
+  traitTitle.insertAdjacentElement("afterend", barContainer);
+  barContainer.insertAdjacentElement("afterend", barText);
+  barText.insertAdjacentElement("afterend", axisContainer);
 
   resultArea.style.display = "block";
   resultArea.scrollIntoView({ behavior: "smooth" });
 }
-
 document.addEventListener("DOMContentLoaded", ()=>{
   buildQuestions();
   document.getElementById("calcBtn").addEventListener("click", calcResult);
