@@ -5,7 +5,7 @@
   <link rel="icon" href="https://b8ihua.github.io/documents/無題1413_20251017012211.png" type="image/png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Lusitana:wght@400;700&family=Roboto+Flex:opsz,wght@8..144,100..1000&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Lusitana:wght@400;700&family=Noto+Sans+JP:wght@100..900&family=Roboto+Flex:opsz,wght@8..144,100..1000&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>GachancaMajanca 16 Personalities</title>
@@ -40,6 +40,15 @@
     "YTLC" 514,
     "YTUC" 712;
 }
+
+
+.noto-sans-jp {
+  font-family: "Noto Sans JP", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 700;
+  font-style: normal;
+}
+
   :root{
     --bg:#0f1724; --card:#0b1220; --accent:#88619A; --muted:#98a0b3; --text:#0C1019;
   }
@@ -73,7 +82,7 @@ color:#343C4B;
 /* 丸デザインの選択肢（横並び・未選択は枠線のみ） */
 .options {
   display: flex;
-  gap: 13px;
+  gap: 14px;
   justify-content: center;
   align-items: center;
   margin-top: 8px;
@@ -158,11 +167,24 @@ font-family: "Roboto Flex", sans-serif;
 
 
 }
-  .typename{font-size:18px;margin-top:6px;}
+  .typename{font-size:18px;margin-top:6px;
+font-family: "Noto Sans JP", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 700;
+  font-style: normal;
+}
   .desc{margin-top:0px;color:white;line-height:1.6;}
   pre.map{background:#fff;padding:12px;border-radius:8px;overflow:auto;font-size:13px;}
   footer{margin-top:22px;color:var(--muted);font-size:13px;text-align:center;}
   @media(max-width:700px){ .question{grid-template-columns:1fr;} .options{justify-content:flex-start;} }
+
+.typeTitle {
+  font-family: "Noto Sans JP", sans-serif;
+  font-weight: 600;
+  font-size: 17px;
+  color: #white;
+
+}
 
 .bar-container {
   width: 100%;
@@ -253,6 +275,16 @@ font-family: "Roboto Flex", sans-serif;
   background-color: #88619A;
   border-bottom-left-radius: 12px;
 }
+
+.option-labels {
+  display: flex;
+  justify-content: space-between; /* 左右に配置 */
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 6px; /* ラジオボタンとラベル間の余白 */
+width:100%;
+}
+
 
 .icon {
   width: 50px;
@@ -379,14 +411,14 @@ text-align:left;
 
     <div id="resultArea" class="result" style="display:none;">
   <div id="typeHeader" style="text-align:center; padding:10px; border-radius:0px; ">
-    あなたの性格タイプ<br>
+    <span class="typeTitle"><br>あなたの性格タイプ</span><br>
     
-    <div style="font-size:25px; font-weight:900; margin-top:8px; color:white;" class="small" id="typeFormal"></div>
+    <div style="font-size:30px;  margin-top:8px; color:white;" class="noto-sans-jp" id="typeFormal"></div>
   
 
   <!-- タイプ名と説明をまとめてセンタリング -->
   
-    <div class="typename" id="typeName" style="text-align:center; font-size:20px; font-weight:900; color:white; margin:5px 0px 15px 0px;"></div><span class="typecode" style="text-align:center;font-size:40px;margin-bottom:10px; display:inline-block;"  id="typeCode"></span>
+    <div class="typename" id="typeName" style="text-align:center; font-size:20px;  color:rgba(256,256,256,0.7); margin:5px 0px 15px 0px;"></div><span class="typecode" style="text-align:center;font-size:40px;margin-bottom:10px; display:inline-block;"  id="typeCode"></span>
 
 <div id="typeImageContainer"></div>
 
@@ -554,19 +586,30 @@ function buildQuestions(){
     const qdiv = el("div",{class:"question"});
     const qtext = el("div",{class:"qtext"},[
       el("div",{},[`${q.text}`]),
-      el("div",{class:"small"}, ["（1＝最も思う、5＝最も思わない）"])
+      
     ]);
     const opts = el("div",{class:"options"});
     for(let v=1; v<=7; v++){
   const id = `q${q.id}v${v}`;
   const radio = el("input",{type:"radio", name:`q${q.id}`, id:id, value:String(v)});
-  if(v===4) radio.checked = true;
+  
   const label = el("label",{class:`opt v${v}`, for:id},[""]); // ラベル内は空
   opts.appendChild(radio); 
   opts.appendChild(label);
 }
+
+// ★ラベル行を追加
+const labelsRow = el("div", {
+  style: "display:flex; justify-content:space-between; font-family: 'Noto Sans JP', sans-serif;font-weight: 400;font-size:16px; margin-top:-5px; color:#555;"
+}, [
+  el("span",{ style: "color: #33A474;" }, "そう思う"),
+  el("span", { style: "color: #88619A;" }, "そう思わない")
+]);
+
+
     qdiv.appendChild(qtext);
     qdiv.appendChild(opts);
+qdiv.appendChild(labelsRow); 
     container.appendChild(qdiv);
   });
 }
